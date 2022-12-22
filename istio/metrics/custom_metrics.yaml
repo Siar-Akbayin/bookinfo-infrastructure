@@ -1,0 +1,112 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      extraStatTags:
+        - destination_port
+        - request_host
+        - my_method
+      proxyStatsMatcher:
+        inclusionPrefixes:
+          - istio_my_custom_metric
+  values:
+    telemetry:
+      v2:
+        prometheus:
+          configOverride:
+            inboundSidecar:
+              definitions:
+                - name: my_custom_metric
+                  type: "COUNTER"
+                  value: "(node.metadata.PLATFORM_METADATA['gcp_location'].startsWith('europe') ? 1 : 0)"
+              metrics:
+                - name: requests_total
+                  dimensions:
+#                  tags_to_remove:
+#                    - reporter
+#                    - source_namespace
+#                    - source_workload
+#                    - source_workload_namespace
+#                    - source_principal
+#                    - source_app
+#                    - source_version
+#                    - source_cluster
+#                    - destination_namespace
+#                    - destination_workload
+#                    - destination_workload_namespace
+#                    - destination_principal
+#                    - destination_app
+#                    - destination_version
+#                    - destination_service
+#                    - destination_service_name
+#                    - destination_service_namespace
+#                    - destination_port
+#                    - destination_cluster
+#                    - request_protocol
+#                    - request_operation
+#                    - request_host
+#                    - response_flags
+#                    - grpc_response_status
+#                    - connection_security_policy
+#                    - source_canonical_service
+#                    - destination_canonical_service
+#                    - source_canonical_revision
+#                    - destination_canonical_revision
+                    destination_port: string(destination.port)
+                    request_host: request.host
+                    my_request_id: request.id
+                    gcp_location: node.metadata.PLATFORM_METADATA['gcp_location']
+                    my_method: istio_my_new_attribute
+                - name: my_custom_metric
+                  dimensions:
+#                    destination_address: string(destination.address)
+#                    destination_port: string(destination.port)
+#                    destination_service_name: destination.service.name
+#                    request_host: request.host
+                    my_method: istio_my_new_attribute
+                    gcp_location: node.metadata.PLATFORM_METADATA['gcp_location']
+
+            outboundSidecar:
+              metrics:
+                - name: requests_total
+                  dimensions:
+                    destination_port: string(destination.port)
+                    request_host: request.host
+            gateway:
+              metrics:
+                - name: requests_total
+                  dimensions:
+                    destination_port: string(destination.port)
+                    request_host: request.host
+
+#defaultStatTags
+#  "reporter",
+#  "source_namespace",
+#  "source_workload",
+#  "source_workload_namespace",
+#  "source_principal",
+#  "source_app",
+#  "source_version",
+#  "source_cluster",
+#  "destination_namespace",
+#  "destination_workload",
+#  "destination_workload_namespace",
+#  "destination_principal",
+#  "destination_app",
+#  "destination_version",
+#  "destination_service",
+#  "destination_service_name",
+#  "destination_service_namespace",
+#  "destination_port",
+#  "destination_cluster",
+#  "request_protocol",
+#  "request_operation",
+#  "request_host",
+#  "response_flags",
+#  "grpc_response_status",
+#  "connection_security_policy",
+#  "source_canonical_service",
+#  "destination_canonical_service",
+#  "source_canonical_revision",
+#  "destination_canonical_revision",
