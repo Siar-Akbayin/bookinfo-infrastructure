@@ -7,7 +7,7 @@ spec:
   configPatches:
     - applyTo: HTTP_FILTER
       match:
-        context: SIDECAR_INBOUND
+        context: ANY
         proxy:
           proxyVersion: '1\.16.*'
         listener:
@@ -34,11 +34,11 @@ spec:
                           "output_attribute": "istio_my_new_attribute",
                           "match": [
                             {
-                              "value": "GetRequest",
+                              "value": "GET",
                               "condition": "request.method == 'GET'"
                             },
                             {
-                              "value": "PostRequest",
+                              "value": "POST",
                               "condition": "request.method == 'POST'"
                             }
                           ]

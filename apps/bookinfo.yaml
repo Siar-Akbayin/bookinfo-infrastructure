@@ -332,12 +332,12 @@ spec:
         app: productpage
         version: v1
       annotations:
-        sidecar.istio.io/extraStatTags: destination_port,request_host,my_request_id,gcp_location,destination_address,my_method,destination_service_name
+        sidecar.istio.io/extraStatTags: destination_port,request_host,my_request_id,gcp_location,destination_address,my_method,destination_service_name, custom_destination_ip
     spec:
       serviceAccountName: bookinfo-productpage
       containers:
         - name: productpage
-          image: docker.io/istio/examples-bookinfo-productpage-v1:latest
+          image: docker.io/istio/examples-bookinfo-productpage-v1:1.17.0
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9080

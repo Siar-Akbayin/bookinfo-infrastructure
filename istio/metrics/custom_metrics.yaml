@@ -7,9 +7,11 @@ spec:
         - destination_port
         - request_host
         - my_method
+        - custom_destination_ip
       proxyStatsMatcher:
         inclusionPrefixes:
           - istio_my_custom_metric
+          - istio_purpose_limitation
   values:
     telemetry:
       v2:
@@ -20,6 +22,10 @@ spec:
                 - name: my_custom_metric
                   type: "COUNTER"
                   value: "(node.metadata.PLATFORM_METADATA['gcp_location'].startsWith('europe') ? 1 : 0)"
+#                  value: "((destination_service_name == 'productpage') ? 1 : 0)"
+#                - name: purpose_limitation
+#                  type: "COUNTER"
+#                  value: "((upstream_peer.name == 'details-v1') ? 1 : 0)"
               metrics:
                 - name: requests_total
                   dimensions:
@@ -58,6 +64,7 @@ spec:
                     my_request_id: request.id
                     gcp_location: node.metadata.PLATFORM_METADATA['gcp_location']
                     my_method: istio_my_new_attribute
+                    custom_destination_ip: custom_destination_ip
                 - name: my_custom_metric
                   dimensions:
 #                    destination_address: string(destination.address)
@@ -66,6 +73,7 @@ spec:
 #                    request_host: request.host
                     my_method: istio_my_new_attribute
                     gcp_location: node.metadata.PLATFORM_METADATA['gcp_location']
+                    custom_destination_ip: custom_destination_ip
 
             outboundSidecar:
               metrics:
@@ -80,7 +88,7 @@ spec:
                     destination_port: string(destination.port)
                     request_host: request.host
 
-#defaultStatTags
+#defaultStatTags https://github.com/istio/istio/blob/release-1.7/pkg/bootstrap/config.go
 #  "reporter",
 #  "source_namespace",
 #  "source_workload",
