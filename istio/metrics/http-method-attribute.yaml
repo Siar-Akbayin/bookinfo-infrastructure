@@ -1,13 +1,13 @@
 apiVersion: networking.istio.io/v1alpha3
 kind: EnvoyFilter
 metadata:
-  name: new-attribute
+  name: http-method-attribute
   namespace: istio-system
 spec:
   configPatches:
     - applyTo: HTTP_FILTER
       match:
-        context: ANY
+        context: SIDECAR_INBOUND
         proxy:
           proxyVersion: '1\.16.*'
         listener:
@@ -31,7 +31,7 @@ spec:
                     {
                       "attributes": [
                         {
-                          "output_attribute": "istio_my_new_attribute",
+                          "output_attribute": "http_method",
                           "match": [
                             {
                               "value": "GET",
