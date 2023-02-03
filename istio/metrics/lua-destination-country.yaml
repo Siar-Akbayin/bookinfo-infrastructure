@@ -1,0 +1,43 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: lua-destination-country
+  namespace: istio-system
+spec:
+  workloadSelector:
+    labels:
+      app: productpage
+  configPatches:
+    # The first patch adds the lua filter to the listener/http connection manager
+    - applyTo: HTTP_FILTER
+      match:
+        context: ANY
+        listener:
+          portNumber: 9080
+          filterChain:
+            filter:
+              name: "envoy.filters.network.http_connection_manager"
+              subFilter:
+                name: "envoy.filters.http.router"
+      patch:
+        operation: INSERT_BEFORE
+        value: # lua filter specification
+          name: envoy.filters.http.lua
+          typed_config:
+            "@type": "type.googleapis.com/envoy.extensions.filters.http.lua.v3.Lua"
+            inlineCode: |
+              function envoy_on_response(response_handle)
+                local apiKey = "fc049a0938c8464195a74ec206e9183a"
+                local ipAddress = response_handle:headers():get(":downstream_ip_address")
+                local url = "https://api.ipgeolocation.io/ipgeo?apiKey=" .. apiKey .. "&ip=" .. ipAddress
+                local cURL = io.popen("curl -s " .. url)
+                local response = cURL:read("*all")
+                cURL:close()
+                local cjson = require "cjson"
+                local json_table = cjson.decode(response)
+                local is_eu = json_table["is_eu"]
+                 response_handle:headers():add("is_eu", is_eu)
+              end
+              function envoy_on_request(request_handle)
+                 request_handle:headers():add("is_eu", is_eu)
+              end
