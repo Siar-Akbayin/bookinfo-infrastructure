@@ -1,0 +1,24 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      extraStatTags:
+        - gcp_locationp
+      proxyStatsMatcher:
+        inclusionPrefixes:
+          - istio_my_custom_metric
+  values:
+    telemetry:
+      v2:
+        prometheus:
+          configOverride:
+            inboundSidecar:
+              definitions:
+                - name: gcp_europe_counter
+                  type: "COUNTER"
+                  value: "(node.metadata.PLATFORM_METADATA['gcp_location'].startsWith('europe') ? 1 : 0)"
+              metrics:
+                - name: gcp_europe_counter
+                  dimensions:
+                    gcp_location: node.metadata.PLATFORM_METADATA['gcp_location']
