@@ -1,0 +1,19 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  meshConfig:
+    defaultConfig:
+      extraStatTags:
+        - request_host
+  values:
+    telemetry:
+      v2:
+        prometheus:
+          configOverride:
+            inboundSidecar:
+              metrics:
+                - name: requests_total
+                  dimensions:
+                    request_host: request.host
+                  tags_to_remove:
+                    - destination_namespace
