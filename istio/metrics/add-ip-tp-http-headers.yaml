@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: EnvoyFilter
+metadata:
+  name: add-ip-to-http-headers
+  namespace: istio-system
+spec:
+  configPatches:
+    - applyTo: ROUTE_CONFIGURATION
+      match:
+        context: ANY
+      patch:
+        operation: MERGE
+        value:
+          request_headers_to_add:
+            - header:
+                key: 'downstream_ip_address'
+                value: '%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%'
+              append: false
+          response_headers_to_add:
+            - header:
+                key: 'downstream_ip_address'
+                value: '%DOWNSTREAM_REMOTE_ADDRESS_WITHOUT_PORT%'
+              append: false
