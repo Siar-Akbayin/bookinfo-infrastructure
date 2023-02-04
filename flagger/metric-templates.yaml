@@ -64,4 +64,18 @@ spec:
     type: prometheus
     address: http://prometheus.istio-system:9090
   query: |
-    increase(istio_my_custom_metric{}[5m])
+    sum(istio_my_custom_metric)
+---
+apiVersion: flagger.app/v1beta1
+kind: MetricTemplate
+metadata:
+  name: purpose-limitation-productpage-details
+  namespace: istio-system
+spec:
+  provider:
+    type: prometheus
+    address: http://prometheus.istio-system:9080
+  query: |
+    sum(istio_requests_total{destination_service_name="details", http_method="POST", source_app="productpage"})
+    /
+    sum(istio_requests_total{http_method="POST", source_app="productpage"})

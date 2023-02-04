@@ -75,6 +75,8 @@ spec:
       labels:
         app: details
         version: v1
+      annotations:
+        sidecar.istio.io/extraStatTags: http_method
     spec:
       serviceAccountName: bookinfo-details
       containers:
@@ -128,6 +130,8 @@ spec:
       labels:
         app: ratings
         version: v1
+      annotations:
+        sidecar.istio.io/extraStatTags: http_method
     spec:
       serviceAccountName: bookinfo-ratings
       containers:
@@ -181,6 +185,8 @@ spec:
       labels:
         app: reviews
         version: v1
+      annotations:
+        sidecar.istio.io/extraStatTags: http_method
     spec:
       serviceAccountName: bookinfo-reviews
       containers:
@@ -223,6 +229,8 @@ spec:
       labels:
         app: reviews
         version: v2
+      annotations:
+        sidecar.istio.io/extraStatTags: http_method
     spec:
       serviceAccountName: bookinfo-reviews
       containers:
@@ -265,6 +273,8 @@ spec:
       labels:
         app: reviews
         version: v3
+      annotations:
+        sidecar.istio.io/extraStatTags: http_method
     spec:
       serviceAccountName: bookinfo-reviews
       containers:
@@ -332,7 +342,8 @@ spec:
         app: productpage
         version: v1
       annotations:
-        sidecar.istio.io/extraStatTags: destination_port,request_host,my_request_id,gcp_location,destination_address,my_method,destination_service_name, custom_destination_ip
+#        sidecar.istio.io/metadata: '{"KUBERNETES_SERVICE_NAME": "productpage-v1"}'
+        sidecar.istio.io/extraStatTags: gcp_location,http_method
     spec:
       serviceAccountName: bookinfo-productpage
       containers:
